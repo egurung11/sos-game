@@ -12,7 +12,8 @@ public abstract class Board {
     private char turn;
     private GameState currentGameState;
 
-    private Player pA, pB;
+    private final Player pA;
+    private final Player pB;
 
     public Board(int boardSize) {
         grid = new Cell[boardSize][boardSize];

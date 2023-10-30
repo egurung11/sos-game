@@ -1,32 +1,25 @@
 package test;
 
-import static org.junit.Assert.*;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
+import main.Board;
+import main.Board.Cell;
 import main.GeneralGame;
 import main.SimpleGame;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import main.Board;
-import main.Board.Cell;
-import main.GameGraphics;
-
-import java.awt.*;
-import java.util.Arrays;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 public class BoardTest {
-
-    //private Board board = new Board(board.boardSize);
     int boardSize;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
     }
 
     @Test
@@ -44,7 +37,6 @@ public class BoardTest {
     @Test
     public void testGamePlaying() {
         Board board = new GeneralGame(8);
-        char turn = board.getTurn();
         board.makeMove(2, 2, Cell.S);
         assertNotEquals(Board.GameState.PLAYING, board.getGameState());
     }
