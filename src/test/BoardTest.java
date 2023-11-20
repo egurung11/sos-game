@@ -153,4 +153,117 @@ public class BoardTest {
             assertEquals(" ", boardSize, boardSize);
     }
 
+    @Test
+    public void testComputerASimple() {
+        Board board = new SimpleGame(3);
+        board.computerMove();
+        board.makeMove(0, 1, Cell.O);
+
+        board.computerMove();
+        board.makeMove(1, 1, Cell.O);
+
+        board.computerMove();
+        board.makeMove(1, 3, Cell.O);
+
+        board.computerMove();
+        board.makeMove(2, 0, Cell.O);
+        assertNotEquals(true, board.boardFull());
+    }
+    @Test
+    public void testComputerBSimple() {
+        Board board = new SimpleGame(3);
+        board.makeMove(0, 0, Cell.O);
+        board.computerMove();
+
+        board.makeMove(0, 3, Cell.O);
+        board.computerMove();
+
+        board.makeMove(1, 2, Cell.O);
+        board.computerMove();
+
+        board.makeMove(2, 1, Cell.O);
+        board.computerMove();
+        assertNotEquals(true, board.boardFull());
+    }
+    @Test
+    public void testBothComputerSimple() {
+        Board board = new SimpleGame(3);
+        board.computerMove();
+        board.computerMove();
+
+        board.computerMove();
+        board.computerMove();
+
+        board.computerMove();
+        board.computerMove();
+
+        board.computerMove();
+        board.computerMove();
+        assertNotEquals(true, board.boardFull());
+    }
+    @Test
+    public void testComputerAGeneral() {
+        Board board = new GeneralGame(3);
+        board.computerMove();
+        board.makeMove(0, 1, Cell.O);
+
+        board.computerMove();
+        board.makeMove(1, 1, Cell.O);
+
+        board.computerMove();
+        board.makeMove(1, 3, Cell.O);
+
+        board.computerMove();
+        board.makeMove(2, 0, Cell.O);
+        assertNotEquals(true, board.boardFull());
+    }
+    @Test
+    public void testComputerBGeneral() {
+        Board board = new GeneralGame(3);
+        board.makeMove(0, 0, Cell.O);
+        board.computerMove();
+
+        board.makeMove(0, 3, Cell.O);
+        board.computerMove();
+
+        board.makeMove(1, 2, Cell.O);
+        board.computerMove();
+
+        board.makeMove(2, 1, Cell.O);
+        board.computerMove();
+        assertNotEquals(true, board.boardFull());
+    }
+    @Test
+    public void testBothComputerGeneral() {
+        Board board = new GeneralGame(3);
+        board.computerMove();
+        board.computerMove();
+
+        board.computerMove();
+        board.computerMove();
+
+        board.computerMove();
+        board.computerMove();
+
+        board.computerMove();
+        board.computerMove();
+        assertNotEquals(true, board.boardFull());
+    }
+
+    @Test
+    public void testComputerMakeMoveSimpleGame() {
+        Board board = new SimpleGame(8);
+        char turn = board.getTurn();
+        board.computerMove();
+        assertNotEquals(turn, board.getTurn());
+    }
+
+    @Test
+    public void testComputerMakeMoveGeneralGame() {
+        Board board = new GeneralGame(8);
+        char turn = board.getTurn();
+        board.computerMove();
+        assertNotEquals(turn, board.getTurn());
+    }
+
 }

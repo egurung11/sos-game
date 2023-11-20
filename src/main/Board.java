@@ -1,6 +1,7 @@
 package main;
 
 import java.util.Arrays;
+import java.util.Random;
 
 public abstract class Board {
     public enum Cell {EMPTY, S, O}
@@ -124,6 +125,26 @@ public abstract class Board {
         }
 
         return count;
+    }
+
+    public void computerMove() {
+        char currentTurn = this.turn;
+
+        do {
+            Random rand = new Random();
+            int rowSelected = rand.nextInt(getBoardSize());
+            int colSelected = rand.nextInt(getBoardSize());
+
+            Cell move;
+            int x = rand.nextInt(2);
+            if (x == 0) {
+                move = Cell.S;
+            } else {
+                move = Cell.O;
+            }
+            makeMove(rowSelected, colSelected, move);
+        } while (this.turn == currentTurn);
+
     }
 
     public void setGameState(GameState gameState) {

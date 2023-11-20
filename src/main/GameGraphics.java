@@ -1,6 +1,8 @@
 package main;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -19,8 +21,11 @@ public class GameGraphics extends JFrame {
 
     public static final int SYMBOL_STROKE_WIDTH = 1;
 
+    Container contentPane;
     JRadioButton blueS;
     JRadioButton redS;
+    JRadioButton blueComputer;
+    JRadioButton redComputer;
     JLabel turn;
     GameBoardCanvas gameBoardCanvas;
     JLabel redScore;
@@ -29,7 +34,24 @@ public class GameGraphics extends JFrame {
     private Board board;
     private JLabel gameStatusBar;
 
+    Timer timer;
+    int delay;
+
     public GameGraphics() {
+        // Check for computer move every 1 second
+        timer = new Timer(500, e -> {
+            if ((board.getTurn() == 'A' && blueComputer.isSelected()
+                    || board.getTurn() == 'B' && redComputer.isSelected())
+                    && board.getGameState() == Board.GameState.PLAYING) {
+                board.computerMove();
+                blueScore.setText("Score: " + board.getPlayerAScore());
+                redScore.setText("Score: " + board.getPlayerBScore());
+                gameStatusBar.setText(getGameStatusText());
+
+                setTurnLabel(board.getTurn() == 'A' ? "Blue" : "Red");
+                contentPane.repaint();
+            }
+        });
         this.board = new GeneralGame(8);
         setContentPane();
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -52,7 +74,7 @@ public class GameGraphics extends JFrame {
     private void setContentPane () {
         setGameBoardCanvas();
 
-        Container contentPane = getContentPane();
+        contentPane = getContentPane();
         contentPane.setLayout(new BorderLayout());
         contentPane.add(gameBoardCanvas, BorderLayout.CENTER);
 
@@ -77,6 +99,9 @@ public class GameGraphics extends JFrame {
 
         // Blue Side Buttons
         JLabel blueLabel = new JLabel("Blue Player");
+        JRadioButton blueHuman = new JRadioButton("Human");
+        blueHuman.setSelected(true);
+        blueComputer = new JRadioButton("Computer");
         blueS = new JRadioButton("S");
         blueS.setSelected(true);
         JRadioButton blueO = new JRadioButton("O");
@@ -86,10 +111,16 @@ public class GameGraphics extends JFrame {
         blueGroup.add(blueS);
         blueGroup.add(blueO);
 
+        ButtonGroup blueGroup2 = new ButtonGroup();
+        blueGroup2.add(blueHuman);
+        blueGroup2.add(blueComputer);
+
         JPanel bluePanel = new JPanel();
         bluePanel.add(blueLabel);
+        bluePanel.add(blueHuman);
         bluePanel.add(blueS);
         bluePanel.add(blueO);
+        bluePanel.add(blueComputer);
         bluePanel.add(blueScore);
 
         contentPane.add(bluePanel, BorderLayout.WEST);
@@ -99,16 +130,25 @@ public class GameGraphics extends JFrame {
         redS = new JRadioButton("S");
         redS.setSelected(true);
         JRadioButton redO = new JRadioButton("O");
+        JRadioButton redHuman = new JRadioButton("Human");
+        redHuman.setSelected(true);
+        redComputer = new JRadioButton("Computer");
         redScore = new JLabel("Score: 0");
 
         ButtonGroup redGroup = new ButtonGroup();
         redGroup.add(redS);
         redGroup.add(redO);
 
+        ButtonGroup redGroup2 = new ButtonGroup();
+        redGroup2.add(redHuman);
+        redGroup2.add(redComputer);
+
         JPanel redPanel = new JPanel();
         redPanel.add(redLabel);
+        redPanel.add(redHuman);
         redPanel.add(redS);
         redPanel.add(redO);
+        redPanel.add(redComputer);
         redPanel.add(redScore);
 
         contentPane.add(redPanel, BorderLayout.EAST);
@@ -129,6 +169,7 @@ public class GameGraphics extends JFrame {
                     : new SimpleGame((Integer) sizeOfBoard.getValue());
             board.setGameState(Board.GameState.PLAYING);
             setGameBoardCanvas();
+            timer.start();
             submit.setVisible(false);
             reset.setVisible(true);
             contentPane.repaint();
@@ -137,6 +178,7 @@ public class GameGraphics extends JFrame {
         reset.addActionListener(e-> {
             board.resetGame();
             gameStatusBar.setText("");
+            timer.stop();
             reset.setVisible(false);
             submit.setVisible(true);
             contentPane.repaint();
@@ -175,6 +217,61 @@ public class GameGraphics extends JFrame {
 
     class GameBoardCanvas extends JPanel {
         GameBoardCanvas() {
+            addMouseListener(new MouseAdapter() {
+                public void mouseClicked(MouseEvent e) {
+                    if (board.getGameState() == Board.GameState.PLAYING) {
+
+                        System.out.println("Valid click");
+                        int rowSelected = e.getY() / (CANVAS_SIZE / board.getBoardSize());
+                        int colSelected = e.getX() / (CANVAS_SIZE / board.getBoardSize());
+                        //board.makeMove(rowSelected, colSelected);
+                        Cell move;
+                        if (board.getTurn() == 'A') {
+                            move = blueS.isSelected() ? Cell.S : Cell.O;
+                        } else {
+                            move = redS.isSelected() ? Cell.S : Cell.O;
+                        }
+                        board.makeMove(rowSelected, colSelected, move);
+
+                        blueScore.setText("Score: " + board.getPlayerAScore());
+                        redScore.setText("Score: " + board.getPlayerBScore());
+                        gameStatusBar.setText(getGameStatusText());
+
+                        setTurnLabel(board.getTurn() == 'A' ? "Blue" : "Red");
+
+                        // Blue AI Turn
+                        /*if (blueComputer.isSelected() && board.getTurn() == 'A') {
+                            Random rand = new Random();
+                            rowSelected = rand.nextInt(board.getBoardSize());
+                            colSelected = rand.nextInt(board.getBoardSize());
+
+                            int x = rand.nextInt(2);
+                            if (x == 0) {
+                                move = Cell.S;
+                            } else {
+                                move = Cell.O;
+                            }
+                            board.makeMove(rowSelected, colSelected, move);
+                        }
+
+                        // Red AI Turn
+                        if (redComputer.isSelected() && board.getTurn() == 'B') {
+                            Random rand = new Random();
+                            rowSelected = rand.nextInt(board.getBoardSize());
+                            colSelected = rand.nextInt(board.getBoardSize());
+
+                            int x = rand.nextInt(2);
+                            if (x == 0) {
+                                move = Cell.S;
+                            } else {
+                                move = Cell.O;
+                            }
+                            board.makeMove(rowSelected, colSelected, move);
+                        }*/
+                    }
+                    repaint();
+                }
+            });
             addMouseListener(new MouseAdapter() {
                 public void mouseClicked(MouseEvent e) {
                     if (board.getGameState() == Board.GameState.PLAYING) {
