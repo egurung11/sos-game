@@ -1,8 +1,6 @@
 package main;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -26,6 +24,7 @@ public class GameGraphics extends JFrame {
     JRadioButton redS;
     JRadioButton blueComputer;
     JRadioButton redComputer;
+    JButton replay;
     JLabel turn;
     GameBoardCanvas gameBoardCanvas;
     JLabel redScore;
@@ -35,7 +34,6 @@ public class GameGraphics extends JFrame {
     private JLabel gameStatusBar;
 
     Timer timer;
-    int delay;
 
     public GameGraphics() {
         // Check for computer move every 1 second
@@ -51,6 +49,7 @@ public class GameGraphics extends JFrame {
                 setTurnLabel(board.getTurn() == 'A' ? "Blue" : "Red");
                 contentPane.repaint();
             }
+
         });
         this.board = new GeneralGame(8);
         setContentPane();
@@ -161,7 +160,10 @@ public class GameGraphics extends JFrame {
 
         JButton submit = new JButton("Start Game!");
         JButton reset = new JButton("Reset");
+        JButton fileRecord = new JButton("Send to File");
+        replay = new JButton("Replay");
         reset.setVisible(false);
+        replay.setVisible(false);
 
         submit.addActionListener(e -> {
             board = generalGame.isSelected()
@@ -184,8 +186,23 @@ public class GameGraphics extends JFrame {
             contentPane.repaint();
         });
 
+        fileRecord.addActionListener(e-> {
+            board.gameToFile();
+            fileRecord.setVisible(false);
+            replay.setVisible(true);
+        });
+
+        replay.addActionListener(e-> {
+            board.replayGame();
+            replay.setVisible(false);
+            fileRecord.setVisible(true);
+            contentPane.repaint();
+        });
+
         turnPanel.add(submit);
         turnPanel.add(reset);
+        turnPanel.add(fileRecord);
+        turnPanel.add(replay);
 
         gameStatusBar = new JLabel("  ");
         //gameStatusBar.setFont(new Font(Font.DIALOG_INPUT, Font.BOLD, 15));
@@ -238,36 +255,6 @@ public class GameGraphics extends JFrame {
                         gameStatusBar.setText(getGameStatusText());
 
                         setTurnLabel(board.getTurn() == 'A' ? "Blue" : "Red");
-
-                        // Blue AI Turn
-                        /*if (blueComputer.isSelected() && board.getTurn() == 'A') {
-                            Random rand = new Random();
-                            rowSelected = rand.nextInt(board.getBoardSize());
-                            colSelected = rand.nextInt(board.getBoardSize());
-
-                            int x = rand.nextInt(2);
-                            if (x == 0) {
-                                move = Cell.S;
-                            } else {
-                                move = Cell.O;
-                            }
-                            board.makeMove(rowSelected, colSelected, move);
-                        }
-
-                        // Red AI Turn
-                        if (redComputer.isSelected() && board.getTurn() == 'B') {
-                            Random rand = new Random();
-                            rowSelected = rand.nextInt(board.getBoardSize());
-                            colSelected = rand.nextInt(board.getBoardSize());
-
-                            int x = rand.nextInt(2);
-                            if (x == 0) {
-                                move = Cell.S;
-                            } else {
-                                move = Cell.O;
-                            }
-                            board.makeMove(rowSelected, colSelected, move);
-                        }*/
                     }
                     repaint();
                 }
