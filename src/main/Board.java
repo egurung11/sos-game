@@ -18,10 +18,10 @@ public abstract class Board {
     private final Player pA;
     private final Player pB;
 
-    private Vector<Integer> recordRow = new Vector<>();
-    private Vector<Integer> recordColumn = new Vector<>();
+    private final Vector<Integer> recordRow = new Vector<>();
+    private final Vector<Integer> recordColumn = new Vector<>();
 
-    private Vector<Character> recordPiece = new Vector<>();
+    private final Vector<Character> recordPiece = new Vector<>();
 
     public Board(int boardSize) {
         grid = new Cell[boardSize][boardSize];
